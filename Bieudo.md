@@ -6,6 +6,8 @@ classDiagram
     }
     namespace entity {
         class Player
+        class Entity
+        class Aquarium
     }
     namespace javax.swing {
         class JFrame
@@ -29,10 +31,18 @@ classDiagram
         #paintComponent(Graphics g) void
     }
 
+    class Enity {
+
+    }
+    
     class Player {
         -x : int
         -y : int
         +update() void
         +draw(Graphics2D g2) void
+    }
+
+    class Aquarium {
+
     }
 ```
