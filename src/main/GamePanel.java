@@ -22,10 +22,9 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel implements Runnable {
-    
     // --- 1. SCREEN & WORLD SETTINGS ---
-    public final int screenWidth = 780;
-    public final int screenHeight = 640;
+    public final int screenWidth = 780;//800
+    public final int screenHeight = 640;//640
     public final int worldWidth = 1280;
     public final int worldHeight = 960;
     public final int originalTileSize = 16;
@@ -37,7 +36,9 @@ public class GamePanel extends JPanel implements Runnable {
     public int cameraY = 0;
 
     // --- 3. GAME STATE ---
-    public int gameState;
+    public int gameState ;
+    //public final int startState = 0;      // Màn hình Logo/Start
+    //public final int instructionState = 5; // Màn hình hướng dẫn (GameIntro)
     public final int playState = 1;
     public final int gameOverState = 2;
     public final int winState = 3;
@@ -51,8 +52,8 @@ public class GamePanel extends JPanel implements Runnable {
     public int lives = 3;
 
     // --- 5. MENU ASSETS & LOGIC ---
-    private BufferedImage menuBg, btnNewGame, btnNewGame2, btnExit2 , btnExit, playerIcon, npc1, npc2, npc3, hudBackground, btnGameOption, btnGameOption2 ;
-    private int menuX, menuY;
+    public BufferedImage menuBg, btnNewGame, btnNewGame2, btnExit2 , btnExit, playerIcon, npc1, npc2, npc3, hudBackground ;
+    public int menuX, menuY;
     
     // Public để MouseHandler truy cập check click
     public Rectangle newGameRect, exitRect, gameOptionRect; 
@@ -114,6 +115,13 @@ public class GamePanel extends JPanel implements Runnable {
         
         banner = new Banner(this);
         banner.show("LEVEL 1", 180);
+
+        this.setPreferredSize(new Dimension(screenWidth, screenHeight));
+        this.setBackground(Color.black);
+        this.setDoubleBuffered(true);
+        
+        // Rất quan trọng: Phải gọi hàm này để các Rect không bị null
+        setupMenuPositions();
     }
 
     private void loadResources() {
@@ -135,7 +143,7 @@ public class GamePanel extends JPanel implements Runnable {
         } catch (IOException e) { e.printStackTrace(); }
     }
 
-    private void setupMenuPositions() {
+    public void setupMenuPositions() {
         int bgW = 558; int bgH = 448;
         menuX = (screenWidth - bgW) / 2;
         menuY = (screenHeight - bgH) / 2;
@@ -393,7 +401,7 @@ public class GamePanel extends JPanel implements Runnable {
         g2.drawString(text, x, y);
     }
 
-    private void drawGameUI(Graphics2D g2) {
+    public void drawGameUI(Graphics2D g2) {
         
         // --- 1. THIẾT LẬP THÔNG SỐ VÀ VẼ NỀN THANH HUD ---
         final int HUD_HEIGHT = 120;

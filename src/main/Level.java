@@ -21,19 +21,19 @@ public class Level {
             // 1. MINNOW (40x30) - 30 điểm
             // Player Lv1 (50x40) LỚN HƠN -> Ăn được
             monsterTypes.add(new MonsterType(
-                "minnow", "/res/minnow/", 2, 40, 30 , 30, 
+                "minnow", "/res/minnow/", 2, 40, 30, 30, 
                 15, 7, 0, 0 
             ));
             // 2. SURGEONFISH (85x80) - 60 điểm
             // Player Lv2 (150x126) LỚN HƠN -> Ăn được
             monsterTypes.add(new MonsterType(
-                "surgeonfish", "/res/surgeonfish/", 3, 65, 60, 60, 
+                "surgeonfish", "/res/surgeonfish/", 3, 95, 75, 60, 
                 14, 5, 5, 0 
             ));
             // 3. LIONFISH (110x104) - 90 điểm
             // Player Lv3 (175x140) LỚN HƠN -> Ăn được
             monsterTypes.add(new MonsterType(
-                "lionfish", "/res/lionfish/", 4, 90, 80, 150, 
+                "lionfish", "/res/lionfish/", 4, 190, 160, 150, 
                 14, 5, 6, 6 
             ));
         }

@@ -199,10 +199,10 @@ public class Player extends Entity {
         // >> LOGIC SCALE MỚI (Dựa trên tính toán diện tích)
         if (gp.score >= 900) {
             newLevel = 3;
-            scale = 2; // Size: 100x80 (Area 8000 > Lionfish 28,640)
+            scale = 2; // Size: 200x168 (Area 33,600 > Lionfish 28,640)
         } else if (gp.score >= 300) {
             newLevel = 2;
-            scale = 1.5; // Size: 75x60 (Area 4500 > Surgeonfish 17,850)
+            scale = 1.5; // Size: 150x126 (Area 18,900 > Surgeonfish 17,850)
         } else {
             newLevel = 1;
             scale = 1.0; // Size: 50x40 (Area 2000 > Minnow 3120)
