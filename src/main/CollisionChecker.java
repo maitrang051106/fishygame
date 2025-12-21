@@ -1,7 +1,6 @@
 package main;
 
 import entity.Enemy;
-import entity.Entity;
 import entity.Player;
 import java.util.ArrayList;
 
@@ -20,6 +19,7 @@ public class CollisionChecker {
         for (int i = 0; i < enemies.size(); i++) {
             Enemy enemy = enemies.get(i);
             if (enemy == null) continue;
+
 
             int paddingX = (int)(enemy.width * 0.2); 
             int paddingY = (int)(enemy.height * 0.2); 
@@ -55,7 +55,7 @@ public class CollisionChecker {
             
             if (gp.lives > 0) {
                 // >> TRƯỜNG HỢP 1: CÒN MẠNG -> PAUSE GAME + HIỆN SORRY
-                gp.gameState = gp.pauseState; // Dừng game
+                gp.gameState = gp.respawnState; // Dừng game
                 gp.banner.show("SORRY", 180); // Hiện chữ SORRY trong 2 giây (120 frames)
                 
             } else {

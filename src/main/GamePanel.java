@@ -2,7 +2,6 @@ package main;
 
 import entity.Aquarium;
 import entity.Banner;
-import entity.Feature;
 import entity.Player;
 import input.KeyHandler;
 import input.MouseHandler;
@@ -44,6 +43,7 @@ public class GamePanel extends JPanel implements Runnable {
     public final int gameOverState = 2;
     public final int winState = 3;
     public final int pauseState = 4;
+    public final int respawnState = 5;
     
     // --- 4. DATA ---
     public Level currentLevel;
@@ -56,10 +56,10 @@ public class GamePanel extends JPanel implements Runnable {
     public int menuX, menuY;
     
     // Public để MouseHandler truy cập check click
-    public Rectangle newGameRect, exitRect; 
+    public Rectangle newGameRect, exitRect, gameOptionRect; 
     
     // Biến điều khiển Animation Menu
-    public int commandNum = -1; // -1: None, 0: NewGame, 1: Exit
+    public int commandNum = -1; // -1: None, 0: NewGame, 1: Exit, 2: GameOption
     private int menuTick = 0;   // Đếm thời gian để tạo sóng
 
     // --- 6. SYSTEM ---
@@ -72,7 +72,6 @@ public class GamePanel extends JPanel implements Runnable {
     Sound sound = new Sound();
     
     public CollisionChecker cChecker = new CollisionChecker(this);
-    public Feature feature = new Feature();
     public Banner banner; 
     Thread gameThread;
     
@@ -138,9 +137,8 @@ public class GamePanel extends JPanel implements Runnable {
             npc2 = ImageIO.read(getClass().getResourceAsStream("/res/surgeonfish/surgeonfishswim6.png"));
             npc3 = ImageIO.read(getClass().getResourceAsStream("/res/lionfish/lionfishidle1.png"));
             hudBackground = ImageIO.read(getClass().getResourceAsStream("/res/screen/menuOcean3.jpg"));
-
-
-
+            btnGameOption = ImageIO.read(getClass().getResourceAsStream("/res/screen/gameoption.png"));
+            btnGameOption2 = ImageIO.read(getClass().getResourceAsStream("/res/screen/gameoption2.png"));
 
         } catch (IOException e) { e.printStackTrace(); }
     }
@@ -160,6 +158,7 @@ public class GamePanel extends JPanel implements Runnable {
         
         newGameRect = new Rectangle(startX, centerY - ngH/2 + 100, ngW, ngH);
         exitRect = new Rectangle(startX + ngW + gap, centerY - exH/2 + 100, exW, exH);
+        gameOptionRect = new Rectangle(startX + ngW + gap, centerY - exH/2 + 200, exW, exH);
         playMusic(0);
     }
 
@@ -216,6 +215,15 @@ public class GamePanel extends JPanel implements Runnable {
 
         banner.update();
 
+        if (gameState == respawnState){
+            if (!banner.isActive()) {
+                gameState = playState;
+                player.resetPosition();
+                player.enableInvincibility();
+            }
+            return; 
+        }
+
         if (gameState == playState) {
             if (!startBannerShown) {
                 if (!banner.isActive()) startBannerShown = true; 
@@ -223,7 +231,7 @@ public class GamePanel extends JPanel implements Runnable {
 
             player.update();
             
-            // Camera Edge Pushing
+            // Camera Logic (edge pushing)
             int marginX = 150; int marginY = 100;
             int playerScreenX = player.x - cameraX;
             int playerScreenY = player.y - cameraY;
@@ -304,6 +312,8 @@ public class GamePanel extends JPanel implements Runnable {
         // Lớp nền tối
         g2.setColor(new Color(0, 0, 0, 150));
         g2.fillRect(0, 0, screenWidth, screenHeight);
+
+        if (menuBg != null) g2.drawImage(menuBg, menuX, menuY, null);
         // Lấy kích thước ban đầu (Giả định bạn có biến này hoặc lấy từ ảnh menuBg)
         int originalWidth = menuBg.getWidth(null); 
         int originalHeight = menuBg.getHeight(null);
@@ -314,7 +324,6 @@ public class GamePanel extends JPanel implements Runnable {
 
         // Vẽ khung Menu với kích thước MỚI
         if (menuBg != null) {
-            // Thay thế dòng cũ bằng dòng sau:
             g2.drawImage(menuBg, 
                         menuX - 50 ,      // Vị trí X
                         menuY,            // Vị trí Y
@@ -325,8 +334,8 @@ public class GamePanel extends JPanel implements Runnable {
         // --- TÍNH TOÁN HIỆU ỨNG SÓNG (BOBBING EFFECT) ---
         // Biên độ 5px, tốc độ 0.1
         int waveOffset = (int)(Math.sin(menuTick * 0.1) * 5); 
-        
-        // Vẽ nút New Game
+
+    //     Vẽ nút New Game
        int y = newGameRect.y;
         
         // KIỂM TRA HOVER (commandNum == 0)
@@ -351,6 +360,21 @@ public class GamePanel extends JPanel implements Runnable {
             } else {
                 // VẼ NÚT THƯỜNG KHI KHÔNG HOVER
                 g2.drawImage(btnExit, exitRect.x, y1, exitRect.width, exitRect.height, null);
+    
+            }
+        }
+        // Draw GameOption
+            if (btnGameOption != null && btnGameOption2 != null) {
+            int y2 = gameOptionRect.y;
+            
+            if (commandNum == 2) {
+                y2 += waveOffset;
+                // VẼ NÚT SÁNG (newgame2) KHI HOVER
+                g2.drawImage(btnGameOption2, gameOptionRect.x, y2, gameOptionRect.width, gameOptionRect.height, null);
+            
+            } else {
+                // VẼ NÚT THƯỜNG KHI KHÔNG HOVER
+                g2.drawImage(btnGameOption, gameOptionRect.x, y2, gameOptionRect.width, gameOptionRect.height, null);
     
             }
         }
@@ -536,10 +560,7 @@ public class GamePanel extends JPanel implements Runnable {
                     g2.setComposite(originalComposite);
                 }
             }
-        }
-
-        
-        
+        } 
     }
     
 

@@ -1,6 +1,8 @@
 package entity;
 
 import input.MouseHandler;
+
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -23,10 +25,7 @@ public class Player extends Entity {
     final int BASE_HEIGHT = 40; 
     
     // --- 2. ASSETS ---
-    public BufferedImage[] eatFrames;
-    public BufferedImage[] idleFrames;
-    public BufferedImage[] swimFrames;
-    public BufferedImage[] turnFrames;
+    public BufferedImage[] eatFrames, idleFrames, swimFrames, turnFrames;
     public BufferedImage upBubble; 
     
     // --- 3. MOVEMENT & LOGIC VARIABLES ---
@@ -59,13 +58,11 @@ public class Player extends Entity {
     public void setDefaultValues() {
         currentLevel = 1;
         updateSize(1.0); // Bắt đầu với tỷ lệ 1.0
+        resetPosition();
         
         x = gp.worldWidth / 2 - width / 2;
         y = gp.worldHeight / 2 - height / 2;
         
-        exactX = x;
-        exactY = y;
-
         speed = 5; 
         state = "idle";
         direction = "right";
@@ -73,6 +70,19 @@ public class Player extends Entity {
         solidArea = new Rectangle((int)x, (int)y, width, height);
     }
     
+    public void resetPosition() {
+        x = gp.worldWidth / 2 - width / 2;
+        y = gp.worldHeight / 2 - height / 2;
+        exactX = x;
+        exactY = y;
+        solidArea = new Rectangle((int)x, (int)y, width, height);
+    }
+
+    public void enableInvincibility() {
+        invincible = true;
+        invincibleCounter = 180; // 3 giây
+    }
+
     private void updateSize(double scale) {
         // Tính toán kích thước mới dựa trên tỷ lệ
         this.width = (int)(BASE_WIDTH * scale);
@@ -104,6 +114,11 @@ public class Player extends Entity {
 
     public void update() {
         checkLevelUp();
+
+        if (invincible) {
+            invincibleCounter--;
+            if (invincibleCounter <= 0) invincible = false;
+        }
 
         // Movement Logic
         double centerX = exactX + width / 2.0;
@@ -146,7 +161,8 @@ public class Player extends Entity {
 
         // State Update
         if (!state.equals("turn") && !state.equals("eat")) {
-            double velocity = Math.sqrt(dx * easing * dx * easing + dy * easing * dy * easing);
+            // Use hypot for stable distance calculation, then apply easing
+            double velocity = Math.hypot(dx, dy) * easing;
             state = (velocity > 0.5) ? "swim" : "idle";
         }
 
@@ -189,7 +205,7 @@ public class Player extends Entity {
             scale = 1.5; // Size: 150x126 (Area 18,900 > Surgeonfish 17,850)
         } else {
             newLevel = 1;
-            scale = 1.0; // Size: 125x105 (Area 13,125 > Minnow 3,120)
+            scale = 1.0; // Size: 50x40 (Area 2000 > Minnow 3120)
         }
 
         if (newLevel > currentLevel) {
@@ -210,12 +226,17 @@ public class Player extends Entity {
         else if (state.equals("swim") && spriteNum < SWIM_FRAMES) currentFrame = swimFrames[spriteNum];
         else if (spriteNum < IDLE_FRAMES) currentFrame = idleFrames[spriteNum];
 
+        
         if (currentFrame != null) {
             // Vẽ theo kích thước thật đã được scale
             int drawWidth = this.width;
             int drawHeight = this.height;
             
             AffineTransform oldTransform = g2.getTransform();
+            
+            if (invincible) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
+            }
             
             int screenX = x - gp.cameraX;
             int screenY = y - gp.cameraY;
