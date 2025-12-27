@@ -176,6 +176,7 @@ public class GamePanel extends JPanel implements Runnable {
             bossBubbleImg = ImageIO.read(getClass().getResourceAsStream("/res/animation/stun.png"));
             //currentBackground = background;
             currentBackground = background;
+            playMusic(0);
         } catch (IOException e) { e.printStackTrace(); }
     }
 
@@ -195,7 +196,7 @@ public class GamePanel extends JPanel implements Runnable {
         newGameRect = new Rectangle(startX, centerY - ngH/2 + 100, ngW, ngH);
         exitRect = new Rectangle(startX + ngW + gap, centerY - exH/2 + 100, exW, exH);
         gameOptionRect = new Rectangle(startX + ngW + gap, centerY - exH/2 + 200, exW, exH);
-        playMusic(0);
+        
     }
     // khôi phục toàn bộ trò chơi về trạng thái ban 
     public void resetGame() {
